@@ -1,21 +1,59 @@
 program main
     use cubic_spline_interpolation
+    use runge_kutta_4
     implicit none
 
-    real(8), dimension(3) :: x, y
-    integer :: n
-    type(cubic_spline) :: cs
-    real(8) :: y_interp
+    interface
+        function f(t, x) result(dx)
+            real(8), intent(in) :: t
+            real(8), dimension(2), intent(in) :: x
+            real(8), dimension(size(x)) :: dx
+        end function f
 
-    integer :: i
+        function terminate(i, tn, xn) result(b)
+            integer, intent(in) :: i
+            real(8), intent(in) :: tn
+            real(8), dimension(2), intent(in) :: xn
+            logical :: b
+        end function terminate
+    end interface
 
-    x = [-1.0, 0.0, 3.0]
-    y = [0.5, 0.0, 3.0]
-    n = size(x)
+    real(8) :: t0, h
+    real(8), dimension(2) :: x0
+    integer :: maxiter
+    real(8), dimension(:, :), allocatable :: sol
 
-    call interpolate(x, y, n, cs)
-    call evaluate(cs, 2.0d0, y_interp)
+    t0 = 0.0d0
+    x0 = [20.0d0, 20.0d0]
+    h = 0.01d0
+    maxiter = 100000
+    call solve(f, t0, x0, h, maxiter, terminate, sol)
 
-    print '("y_interp = ", f0.4)', y_interp
-    
 end program main
+
+function f(t, x) result(dx)
+    implicit none
+
+    real(8), intent(in) :: t
+    real(8), intent(in), dimension(2) :: x
+    real(8), dimension(2) :: dx
+
+    real(8) :: alpha, beta
+
+    alpha = 0.01
+    beta = 0.02
+
+    dx(1) = (1 - alpha*x(2))*x(1)
+    dx(2) = (-1 + beta*x(1))*x(2)
+end
+
+function terminate(i, tn, xn) result(b)
+    implicit none
+
+    integer, intent(in) :: i
+    real(8), intent(in) :: tn
+    real(8), dimension(2), intent(in) :: xn
+    logical :: b
+
+    b = tn > 15 
+end

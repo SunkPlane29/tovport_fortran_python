@@ -13,18 +13,20 @@ module cubic_spline_interpolation
 
 contains
 
-    subroutine interpolate(x, y, n, cs)
-        integer, intent(in) :: n
-        real(8), dimension(n), intent(in) :: x, y
+    subroutine interpolate(x, y, cs)
+        real(8), dimension(:), intent(in) :: x
+        real(8), dimension(size(x)), intent(in) :: y
         type(cubic_spline), intent(out) :: cs
 
         real(8), dimension(:), allocatable :: c, d
         
-        real(8), dimension(n, n) :: M
-        real(8), dimension(n) :: b
+        real(8), dimension(size(x), size(x)) :: M
+        real(8), dimension(size(x)) :: b
         
-        integer :: i, j
-        
+        integer :: i, j, n
+
+        n = size(x)
+
         allocate(c(n-1), d(n-1))
         allocate(cs%x(n), cs%y(n), cs%k(n), cs%c(n-1), cs%d(n-1))
             
