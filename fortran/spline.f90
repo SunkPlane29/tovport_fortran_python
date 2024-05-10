@@ -8,6 +8,9 @@ module cubic_spline_interpolation
     type :: cubic_spline
         integer :: n
         real(8), dimension(:), allocatable :: x, y, k, c, d
+
+        contains
+            final :: csdestructor
     end type
 
 contains
@@ -88,5 +91,15 @@ contains
 
         y = 0.0
     end subroutine evaluate
+
+    subroutine csdestructor(cs)
+        type(cubic_spline), intent(inout) :: cs
+
+        if (allocated(cs%x)) deallocate(cs%x)
+        if (allocated(cs%y)) deallocate(cs%y)
+        if (allocated(cs%k)) deallocate(cs%k)
+        if (allocated(cs%c)) deallocate(cs%c)
+        if (allocated(cs%d)) deallocate(cs%d)
+    end subroutine csdestructor
 
 end module cubic_spline_interpolation
