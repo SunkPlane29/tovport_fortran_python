@@ -3,8 +3,6 @@ module cubic_spline_interpolation
 
     implicit none (type, external)
 
-    external :: sgesv
-
     type :: cubic_spline
         integer :: n
         real(8), dimension(:), allocatable :: x, y, k, c, d
