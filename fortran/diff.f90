@@ -1,5 +1,12 @@
 module runge_kutta_4
     implicit none
+
+    type diffeq_solution
+        real(8), dimension(:, :), allocatable :: sol
+
+    contains
+        final :: diffeq_solution_destructor
+    end type diffeq_solution
     
     interface
         function f(n, t, x) result(dx)
@@ -44,7 +51,7 @@ contains
 
     end subroutine step
 
-    subroutine solve(f, t0, x0, h, terminate, maxiter, sol)
+    subroutine solve_diffeq(f, t0, x0, h, terminate, maxiter, sol)
         interface
             function f(n, t, x) result(dx)
                 integer :: n
@@ -69,7 +76,7 @@ contains
         real(8) :: tn
         real(8), dimension(size(x0)) :: xn, next_x
         real(8), dimension(maxiter, size(x0)+1) :: tempsol
-        real(8), dimension(:, :), allocatable, intent(out) :: sol
+        type(diffeq_solution), intent(out) :: sol
         
         integer :: i, n
 
@@ -91,8 +98,13 @@ contains
 
         print *, i
 
-        allocate(sol(i, n+1))
-        sol = tempsol(1:i-1, :)
+        allocate(sol%sol(i, n+1))
+        sol%sol = tempsol(1:i-1, :)
 
-    end subroutine solve
+    end subroutine solve_diffeq
+
+    subroutine diffeq_solution_destructor(sol)
+        type(diffeq_solution) :: sol
+        if (allocated(sol%sol)) deallocate(sol%sol)
+    end subroutine diffeq_solution_destructor
 end
