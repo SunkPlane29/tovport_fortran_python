@@ -92,14 +92,14 @@ contains
         y = 0.0
     end subroutine evaluate
 
-    subroutine csdestructor(cs)
-        type(cubic_spline), intent(inout) :: cs
+    subroutine csdestructor(self)
+        type(cubic_spline), intent(inout) :: self
 
-        if (allocated(cs%x)) deallocate(cs%x)
-        if (allocated(cs%y)) deallocate(cs%y)
-        if (allocated(cs%k)) deallocate(cs%k)
-        if (allocated(cs%c)) deallocate(cs%c)
-        if (allocated(cs%d)) deallocate(cs%d)
+        if (allocated(self%x)) deallocate(self%x)
+        if (allocated(self%y)) deallocate(self%y)
+        if (allocated(self%k)) deallocate(self%k)
+        if (allocated(self%c)) deallocate(self%c)
+        if (allocated(self%d)) deallocate(self%d)
     end subroutine csdestructor
 
 end module cubic_spline_interpolation

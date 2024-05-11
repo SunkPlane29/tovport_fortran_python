@@ -3,6 +3,7 @@ module runge_kutta_4
 
     type diffeq_solution
         real(8), dimension(:, :), allocatable :: sol
+        integer :: n
 
     contains
         final :: diffeq_solution_destructor
@@ -96,15 +97,14 @@ contains
             tempsol(i, :) = [tn, xn]
         end do
 
-        print *, i
-
         allocate(sol%sol(i, n+1))
         sol%sol = tempsol(1:i-1, :)
+        sol%n = i-1
 
     end subroutine solve_diffeq
 
-    subroutine diffeq_solution_destructor(sol)
-        type(diffeq_solution) :: sol
-        if (allocated(sol%sol)) deallocate(sol%sol)
+    subroutine diffeq_solution_destructor(self)
+        type(diffeq_solution), intent(inout) :: self
+        if (allocated(self%sol)) deallocate(self%sol)
     end subroutine diffeq_solution_destructor
 end
