@@ -1,27 +1,44 @@
 module runge_kutta_4
     implicit none
     
+    interface
+        function f(n, t, x) result(dx)
+            integer :: n
+            real(8) :: t
+            real(8), dimension(n) :: x
+            real(8), dimension(n) :: dx
+        end function f
+
+        function terminate(n, i, tn, xn) result(b)
+            integer :: n, i
+            real(8) :: tn
+            real(8), dimension(n) :: xn
+            logical :: b
+        end function terminate
+    end interface
 contains
 
-    subroutine step(f, t, x, h, next_x)
+    subroutine step(f, n, t, x, h, next_x)
         interface
-            function f(t, x) result(dx)
-                real(8), intent(in) :: t
-                real(8), dimension(:), intent(in) :: x
-                real(8), dimension(size(x)) :: dx
+            function f(n, t, x) result(dx)
+                integer :: n
+                real(8) :: t
+                real(8), dimension(n) :: x
+                real(8), dimension(n) :: dx
             end function f
         end interface
 
+        integer :: n
         real(8), intent(in) :: t, h
-        real(8), dimension(:), intent(in) :: x
-        real(8), dimension(size(x)) :: next_x
+        real(8), dimension(n), intent(in) :: x
+        real(8), dimension(n) :: next_x
 
-        real(8), dimension(size(x)) :: kn1, kn2, kn3, kn4
+        real(8), dimension(n) :: kn1, kn2, kn3, kn4
 
-        kn1 = f(t, x)
-        kn2 = f(t + h/2, x + (h/2) * kn1)
-        kn3 = f(t + h/2, x + (h/2) * kn2)
-        kn4 = f(t + h, x + h * kn3)
+        kn1 = f(n, t, x)
+        kn2 = f(n, t + h/2, x + (h/2) * kn1)
+        kn3 = f(n, t + h/2, x + (h/2) * kn2)
+        kn4 = f(n, t + h, x + h * kn3)
 
         next_x = x + (h/6) * (kn1 + 2*kn2 + 2*kn3 + kn4)
 
@@ -29,16 +46,18 @@ contains
 
     subroutine solve(f, t0, x0, h, terminate, maxiter, sol)
         interface
-            function f(t, x) result(dx)
-                real(8), intent(in) :: t
-                real(8), dimension(:), intent(in) :: x
-                real(8), dimension(size(x)) :: dx
+            function f(n, t, x) result(dx)
+                integer :: n
+                real(8) :: t
+                real(8), dimension(n) :: x
+                real(8), dimension(n) :: dx
             end function f
 
-            function terminate(i, tn, xn) result(b)
-                integer, intent(in) :: i
-                real(8), intent(in) :: tn
-                real(8), dimension(:), intent(in) :: xn
+            function terminate(n, i, tn, xn) result(b)
+                integer :: n
+                integer :: i
+                real(8) :: tn
+                real(8), dimension(n) :: xn
                 logical :: b
             end function terminate
         end interface
@@ -59,19 +78,21 @@ contains
         tn = t0
         xn = x0
 
-        sol(1, :) = [tn, xn]
+        tempsol(1, :) = [tn, xn]
 
         do i = 2, maxiter
-            call step(f, tn, xn, h, next_x)
+            call step(f, n, tn, xn, h, next_x)
             tn = tn + h
-            if (terminate(i, tn, next_x)) exit
+            if (terminate(n, i, tn, next_x)) exit
             xn = next_x
 
-            sol(i, :) = [tn, xn]
+            tempsol(i, :) = [tn, xn]
         end do
 
+        print *, i
+
         allocate(sol(i, n+1))
-        sol(1:i, :) = tempsol(1:i, :)
+        sol = tempsol(1:i-1, :)
 
     end subroutine solve
 end
