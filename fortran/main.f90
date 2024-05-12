@@ -4,15 +4,26 @@ program main
     use tov
     implicit none
 
-    type(diffeq_solution) :: tov_sol
+    integer, parameter :: n = 200
+    real(8), dimension(n, 3) :: mrdiagram
+    real(8), dimension(n) :: p0
+
+    real(8) :: delp0, p0i, p0f
     integer :: i, unit
 
-    call read_eos("../eos.csv")
-    call solve_tov(1.0d0*MEVFM3_TO_PRESSURE_UNIT, tov_sol)
+    p0i = 1.0d0 * MEVFM3_TO_PRESSURE_UNIT
+    p0f = 600.0d0 * MEVFM3_TO_PRESSURE_UNIT
+    delp0 = (p0f - p0i) / n
+    do i = 1, n
+        p0(i) = p0i + delp0 * (i - 1)
+    end do
 
-    open(newunit=unit, file="out/tov.dat")
-    do i = 1, tov_sol%n
-        write(unit, *) tov_sol%sol(i, :)
+    call read_eos("../eos.csv")
+    call solve_mrdiagram(n, p0, mrdiagram)
+
+    open(newunit=unit, file="out/mrdiagram.csv")
+    do i = 1, n
+        write(unit, *) mrdiagram(i, 1), mrdiagram(i, 2), mrdiagram(i, 3)
     end do
     close(unit)
     

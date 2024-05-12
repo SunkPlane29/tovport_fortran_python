@@ -11,35 +11,35 @@ module runge_kutta_4
     
     interface
         function f(n, t, x) result(dx)
-            integer :: n
-            real(8) :: t
-            real(8), dimension(n) :: x
+            integer, intent(in) :: n
+            real(8), intent(in) :: t
+            real(8), dimension(n), intent(in) :: x
             real(8), dimension(n) :: dx
         end function f
 
         function terminate(n, i, tn, xn) result(b)
-            integer :: n, i
-            real(8) :: tn
-            real(8), dimension(n) :: xn
+            integer, intent(in) :: n, i
+            real(8), intent(in) :: tn
+            real(8), dimension(n), intent(in) :: xn
             logical :: b
         end function terminate
     end interface
 contains
 
-    subroutine step(f, n, t, x, h, next_x)
+    pure subroutine step(f, n, t, x, h, next_x)
         interface
-            function f(n, t, x) result(dx)
-                integer :: n
-                real(8) :: t
-                real(8), dimension(n) :: x
+            pure function f(n, t, x) result(dx)
+                integer, intent(in) :: n
+                real(8), intent(in) :: t
+                real(8), dimension(n), intent(in) :: x
                 real(8), dimension(n) :: dx
             end function f
         end interface
 
-        integer :: n
+        integer, intent(in) :: n
         real(8), intent(in) :: t, h
         real(8), dimension(n), intent(in) :: x
-        real(8), dimension(n) :: next_x
+        real(8), dimension(n), intent(out) :: next_x
 
         real(8), dimension(n) :: kn1, kn2, kn3, kn4
 
@@ -52,20 +52,20 @@ contains
 
     end subroutine step
 
-    subroutine solve_diffeq(f, t0, x0, h, terminate, maxiter, sol)
+    pure subroutine solve_diffeq(f, t0, x0, h, terminate, maxiter, sol)
         interface
-            function f(n, t, x) result(dx)
-                integer :: n
-                real(8) :: t
-                real(8), dimension(n) :: x
+            pure function f(n, t, x) result(dx)
+                integer, intent(in) :: n
+                real(8), intent(in) :: t
+                real(8), dimension(n), intent(in) :: x
                 real(8), dimension(n) :: dx
             end function f
 
-            function terminate(n, i, tn, xn) result(b)
-                integer :: n
-                integer :: i
-                real(8) :: tn
-                real(8), dimension(n) :: xn
+            pure function terminate(n, i, tn, xn) result(b)
+                integer, intent(in) :: n
+                integer, intent(in) :: i
+                real(8), intent(in) :: tn
+                real(8), dimension(n), intent(in) :: xn
                 logical :: b
             end function terminate
         end interface

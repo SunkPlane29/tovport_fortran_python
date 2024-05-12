@@ -73,7 +73,7 @@ contains
 
     end subroutine interpolate
 
-    subroutine evaluate(cs, x, y)
+    pure subroutine evaluate(cs, x, y)
         type(cubic_spline), intent(in) :: cs
         real(8), intent(in) :: x
         real(8), intent(out) :: y

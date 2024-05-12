@@ -53,7 +53,7 @@ module eos_init
 
     end subroutine read_eos
 
-    subroutine eos(P, e)
+    pure subroutine eos(P, e)
         real(8), intent(in) :: P
         real(8), intent(out) :: e
 
@@ -75,9 +75,9 @@ module tov
 
 contains
 
-function pressure_diffeq(r, x) result(dP)
-    real(8) :: r
-    real(8), dimension(2) :: x
+pure function pressure_diffeq(r, x) result(dP)
+    real(8), intent(in) :: r
+    real(8), dimension(2), intent(in) :: x
     real(8) :: dP
 
     real(8) :: P, M, e
@@ -89,9 +89,9 @@ function pressure_diffeq(r, x) result(dP)
     dP = -(e*M/r**2)*(1 + P/e)*(1 + 4*pi*r**3*P/M)*(1 - 2*M/r)**(-1)
 end function pressure_diffeq
 
-function mass_diffeq(r, x) result(dM)
-    real(8) :: r
-    real(8), dimension(2) :: x
+pure function mass_diffeq(r, x) result(dM)
+    real(8), intent(in) :: r
+    real(8), dimension(2), intent(in) :: x
     real(8) :: dM
 
     real(8) :: P, M, e
@@ -103,20 +103,20 @@ function mass_diffeq(r, x) result(dM)
     dM = 4*pi*r**2*e
 end
 
-function tov_diffeq(n, r, x) result(dx)
-    integer :: n
-    real(8) :: r
-    real(8), dimension(n) :: x
+pure function tov_diffeq(n, r, x) result(dx)
+    integer, intent(in) :: n
+    real(8), intent(in) :: r
+    real(8), dimension(n), intent(in) :: x
     real(8), dimension(n) :: dx
 
     dx(1) = pressure_diffeq(r, x)
     dx(2) = mass_diffeq(r, x)
 end function tov_diffeq
 
-function tov_terminate(n, i, r, x) result(b)
-    integer :: n, i
-    real(8) :: r
-    real(8), dimension(n) :: x
+pure function tov_terminate(n, i, r, x) result(b)
+    integer, intent(in) :: n, i
+    real(8), intent(in) :: r
+    real(8), dimension(n), intent(in) :: x
     logical :: b
 
     if (x(1) <= 0.0d0) then
@@ -126,7 +126,7 @@ function tov_terminate(n, i, r, x) result(b)
     end if
 end function tov_terminate
 
-subroutine solve_tov(p0, sol)
+pure subroutine solve_tov(p0, sol)
     real(8), intent(in) :: p0
     type(diffeq_solution), intent(out) :: sol
 
@@ -145,5 +145,32 @@ subroutine solve_tov(p0, sol)
     sol%sol(:, 1) = sol%sol(:, 1)*LENGTH_UNIT_TO_SI*1.0d-3
     sol%sol(:, 2) = sol%sol(:, 2)*PRESSURE_UNIT_TO_MEVFM3
 end subroutine solve_tov
+
+pure function calculate_mr(p0) result(mr)
+    real(8), intent(in) :: p0
+    real(8), dimension(2) :: mr
+
+    type(diffeq_solution) :: sol
+
+    call solve_tov(p0, sol)
+
+    mr(1) = sol%sol(sol%n, 3)
+    mr(2) = sol%sol(sol%n, 1)
+end function calculate_mr
+
+subroutine solve_mrdiagram(n, p0, mrdiagram)
+    integer, intent(in) :: n
+    real(8), dimension(n), intent(in) :: p0
+    real(8), dimension(n, 3), intent(out) :: mrdiagram
+    real(8), dimension(2) :: mr
+
+    integer :: i
+    
+    mrdiagram = 0.0d0
+
+    do concurrent (i = 1:n)
+        mrdiagram(i, :) = [p0(i), calculate_mr(p0(i))] 
+    end do
+end subroutine solve_mrdiagram
 
 end module tov
