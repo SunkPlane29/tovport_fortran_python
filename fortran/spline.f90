@@ -73,6 +73,35 @@ contains
 
     end subroutine interpolate
 
+    pure subroutine binary_search(v, x, i)
+        real(8), dimension(:), intent(in) :: v
+        real(8), intent(in) :: x
+        integer, intent(out) :: i
+
+        integer :: n
+        integer :: l, r, m
+
+        n = size(v)
+        l = 1
+        r = n
+        
+        do while (l <= r)
+            m = (l + r)/2
+            if (v(m) == x) then
+                i = m
+                return
+            else if (v(m) < x) then
+                l = m + 1
+            else
+                r = m - 1
+            end if
+        end do
+
+        i = 0
+
+    end subroutine binary_search
+
+    !TODO: performance issue here, should do binary search
     pure subroutine evaluate(cs, x, y)
         type(cubic_spline), intent(in) :: cs
         real(8), intent(in) :: x
@@ -80,16 +109,15 @@ contains
         real(8) :: t
 
         integer :: i
+        
+        call binary_search(cs%x, x, i)
+        if (i == 0) then
+            y = 0.0d0
+            return
+        end if
 
-        do i = 1, cs%n-1
-            if (x >= cs%x(i) .and. x <= cs%x(i+1)) then
-                t = (x - cs%x(i))/(cs%x(i+1) - cs%x(i))
-                y = (1.0 - t)*cs%y(i) + t*cs%y(i+1) + t*(1.0 - t)*(cs%c(i)*(1.0 - t) + cs%d(i)*t)
-                return
-            end if
-        end do
-
-        y = 0.0
+        t = (x - cs%x(i))/(cs%x(i+1) - cs%x(i))
+        y = (1.0 - t)*cs%y(i) + t*cs%y(i+1) + t*(1.0 - t)*(cs%c(i)*(1.0 - t) + cs%d(i)*t)
     end subroutine evaluate
 
     subroutine csdestructor(self)
