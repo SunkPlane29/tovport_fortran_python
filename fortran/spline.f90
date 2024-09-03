@@ -19,17 +19,17 @@ contains
         type(cubic_spline), intent(out) :: cs
 
         real(8), dimension(:), allocatable :: c, d
-        
+
         real(8), dimension(size(x), size(x)) :: M
         real(8), dimension(size(x)) :: b
-        
+
         integer :: i, j, n
 
         n = size(x)
 
         allocate(c(n-1), d(n-1))
         allocate(cs%x(n), cs%y(n), cs%k(n), cs%c(n-1), cs%d(n-1))
-            
+
         M = 0.0
         b = 0.0
 
@@ -84,7 +84,7 @@ contains
         n = size(v)
         l = 1
         r = n
-        
+
         do while (l <= r)
             m = (l + r)/2
             if (v(m) == x) then
@@ -97,7 +97,7 @@ contains
             end if
         end do
 
-        i = 0
+        i = l-1
 
     end subroutine binary_search
 
@@ -109,7 +109,7 @@ contains
         real(8) :: t
 
         integer :: i
-        
+
         call binary_search(cs%x, x, i)
         if (i == 0) then
             y = 0.0d0

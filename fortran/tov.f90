@@ -18,7 +18,7 @@ module eos_init
     type(eos_data) :: eos_file
 
     !TODO: initialize the module, open data file, convert units and interpolate data
-    
+
     contains
 
     subroutine read_eos(eos_filename)
@@ -26,7 +26,7 @@ module eos_init
         integer :: i, n, iostat, unit
         real :: P, e
         character(len=100) :: line
-        
+
         open(newunit=unit, file=eos_filename, status='old', action='read')
 
         iostat = 0
@@ -34,7 +34,7 @@ module eos_init
         do while (iostat == 0)
             n = n + 1
             read(unit, *, iostat=iostat) P, e
-        end do 
+        end do
 
         eos_file%n = n
 
@@ -121,7 +121,7 @@ pure function tov_terminate(n, i, r, x) result(b)
 
     if (x(1) <= 0.0d0) then
         b = .true.
-    else 
+    else
         b = .false.
     end if
 end function tov_terminate
@@ -165,11 +165,11 @@ subroutine solve_mrdiagram(n, p0, mrdiagram)
     real(8), dimension(2) :: mr
 
     integer :: i
-    
+
     mrdiagram = 0.0d0
 
     do concurrent (i = 1:n)
-        mrdiagram(i, :) = [p0(i), calculate_mr(p0(i))] 
+        mrdiagram(i, :) = [p0(i), calculate_mr(p0(i))]
     end do
 end subroutine solve_mrdiagram
 

@@ -11,6 +11,8 @@ program main
     real(8) :: delp0, p0i, p0f
     integer :: i, unit
 
+    real(8), dimension(10) :: testv
+
     p0i = 1.0d0 * MEVFM3_TO_PRESSURE_UNIT
     p0f = 600.0d0 * MEVFM3_TO_PRESSURE_UNIT
     delp0 = (p0f - p0i) / n
@@ -19,6 +21,7 @@ program main
     end do
 
     call read_eos("../eos.csv")
+
     call solve_mrdiagram(n, p0, mrdiagram)
 
     open(newunit=unit, file="out/mrdiagram.dat")

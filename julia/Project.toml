@@ -1,0 +1,10 @@
+name = "julia"
+uuid = "c583fe7a-8c53-4f02-b8f0-408d1f972552"
+authors = ["SunkPlane29 <andrezito300@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+TOV = "9fca5ceb-772d-483d-8cca-4a82db852e23"
