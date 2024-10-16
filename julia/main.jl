@@ -10,7 +10,7 @@ import TOV
 
 function main()
     eos = TOV.EoS("../eos_2.csv")
-    P0 = range(1TOV.MeVfm3, 600TOV.MeVfm3, length=200)
+    P0 = [range(0.01TOV.MeVfm3, 10TOV.MeVfm3, length=50) ; range(10TOV.MeVfm3, 600TOV.MeVfm3, length=200)]
     @time "Solving MR diagram" mrdiagram = TOV.solvemrdiagram(P0, P->eos(P), 1.0TOV.SI_TO_LENGTH_UNIT)
     writedat("out/mrdiagram.dat", mrdiagram[:,1], mrdiagram[:,2], mrdiagram[:,3])
 end

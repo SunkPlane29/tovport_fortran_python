@@ -13,7 +13,7 @@ def main():
     eosfilename = "../eos_2.csv"
 
     initialize_eos(eosfilename)
-    p0 = np.linspace(1.0*MEVFM3_TO_PRESSURE_UNIT, 600.0*MEVFM3_TO_PRESSURE_UNIT, 200)
+    p0 = np.linspace(0.5*MEVFM3_TO_PRESSURE_UNIT, 600.0*MEVFM3_TO_PRESSURE_UNIT, 200)
     mrdiagram = solve_mrdiagram(p0, 12)
 
     #create dataframe without index and header
