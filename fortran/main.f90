@@ -20,7 +20,7 @@ program main
         p0(i) = p0i + delp0 * (i - 1)
     end do
 
-    call read_eos("../eos.csv")
+    call read_eos("../eos_2.csv")
 
     call solve_mrdiagram(n, p0, mrdiagram)
 
