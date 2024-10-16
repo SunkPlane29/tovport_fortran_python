@@ -1,5 +1,4 @@
 import numpy as np
-import numexpr as ne
 
 si_c = 2.99792458e8
 si_G = 6.67430e-11
