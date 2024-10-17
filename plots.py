@@ -20,7 +20,7 @@ def main():
     plt.savefig("out/eos.png", dpi=400)
 
     fig, ax = plt.subplots()
-    # ax.plot(fortran_df["r"], fortran_df["m"], label="Fortran", linestyle="-", color="grey", linewidth=1)
+    ax.plot(fortran_df["r"], fortran_df["m"], label="Fortran", linestyle="-", color="grey", linewidth=1)
     ax.plot(julia_df["r"], julia_df["m"], label="Julia", linestyle=(0, (5, 2)), color="green", linewidth=1)
     ax.plot(python_df["r"], python_df["m"], label="Python", linestyle=(0, (1, 3)), color="blue", linewidth=1)
     ax.set_xlabel("$R$ [km]")
