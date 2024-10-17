@@ -3,7 +3,7 @@ import scienceplots
 import pandas as pd
 
 def main():
-    eos_df = pd.read_csv("eos_1.csv", header=None, names=["p", "e"], skipinitialspace=True)
+    eos_df = pd.read_csv("eos_2.csv", header=None, names=["p", "e"], skipinitialspace=True)
 
     #NOTE: I dont know how to read fortran data files
     fortran_df = pd.read_csv("fortran/out/mrdiagram.dat", sep=" ", header=None, names=["p0", "m", "r", "nan"], skipinitialspace=True)
