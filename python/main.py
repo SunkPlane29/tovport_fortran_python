@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def main():
-    eosfilename = "../eos_2.csv"
+    eosfilename = "../eos/out/eos1.csv"
 
     initialize_eos(eosfilename)
     p0 = np.linspace(0.5*MEVFM3_TO_PRESSURE_UNIT, 600.0*MEVFM3_TO_PRESSURE_UNIT, 200)
