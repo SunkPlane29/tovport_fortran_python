@@ -5,6 +5,7 @@ end
 using DataFrames
 using CSV
 using Plots
+using Printf
 
 function getK(ρ, P, Γ)
     return P / ρ^Γ
@@ -64,35 +65,52 @@ function main()
     Γc = cs2c * (ϵc + Pc) / Pc
     Kc = Pc / ρc^Γc
 
-    Γvals = 1 .+ 4 .*rand(Float64, length(ρvals))
-    Kvals = zeros(length(Γvals))
-    Kvals[1] = getK(ρc, Pc, Γvals[1])
-    for i in 2:length(Γvals)
-        ρint = (ρvals[i])
-        Pint = P(ρint, Kvals[i-1], Γvals[i-1])
-        Kvals[i] = getK(ρint, Pint, Γvals[i])
-    end
-    ϵintvals = zeros(length(Γvals))
-    Pintvals = zeros(length(Γvals))
+    transform(col, val) = val
+    transform(col, val::Float64) = @sprintf("%.16e", val)
 
-    ϵintvals[1] = ϵc
-    Pintvals[1] = Pc
-    
-    for i in 2:length(ϵintvals)
-        ρint = (ρvals[i])
-        Pint = P(ρint, Kvals[i-1], Γvals[i-1])
-        ϵint = ϵ(ρvals[i-1], Pintvals[i-1], ϵintvals[i-1], ρint, Γvals[i-1], Kvals[i-1])
-        ϵintvals[i] = ϵint
-        Pintvals[i] = Pint
+    neos = 100
+
+    for i in range(1, neos)
+        Γvals = 1 .+ 4 .*rand(Float64, length(ρvals))
+        Kvals = zeros(length(Γvals))
+        Kvals[1] = getK(ρc, Pc, Γvals[1])
+        for i in 2:length(Γvals)
+            ρint = (ρvals[i])
+            Pint = P(ρint, Kvals[i-1], Γvals[i-1])
+            Kvals[i] = getK(ρint, Pint, Γvals[i])
+        end
+        ϵintvals = zeros(length(Γvals))
+        Pintvals = zeros(length(Γvals))
+
+        ϵintvals[1] = ϵc
+        Pintvals[1] = Pc
+        
+        for i in 2:length(ϵintvals)
+            ρint = (ρvals[i])
+            Pint = P(ρint, Kvals[i-1], Γvals[i-1])
+            ϵint = ϵ(ρvals[i-1], Pintvals[i-1], ϵintvals[i-1], ρint, Γvals[i-1], Kvals[i-1])
+            ϵintvals[i] = ϵint
+            Pintvals[i] = Pint
+        end
+
+        poly = Polytrope(Γvals, Kvals, ρvals, ϵintvals, Pintvals, maxρ)
+        ρvals = range(1.0ρ0, maxρ, length=300)
+        Pvals = zeros(length(ρvals))
+        ϵvals = zeros(length(ρvals))
+        for i in 1:length(ρvals)
+            Pval, ϵval = poly(ρvals[i])
+            Pvals[i] = Pval
+            ϵvals[i] = ϵval
+        end
+
+        df = DataFrame(P=[crustP;Pvals], ϵ=[crustϵ;ϵvals])
+        CSV.write("out/eos$i.csv", df, writeheader=false, transform=transform)
     end
 
-    poly = Polytrope(Γvals, Kvals, ρvals, ϵintvals, Pintvals, maxρ)
-    ρvals = range(1.0ρ0, maxρ, length=100)
-    Pvals = zeros(length(ρvals))
-    ϵvals = zeros(length(ρvals))
-    for i in 1:length(ρvals)
-        Pval, ϵval = poly(ρvals[i])
-        Pvals[i] = Pval
-        ϵvals[i] = ϵval
+    plot()
+    for i in range(1, neos)
+        df = CSV.File("out/eos$i.csv", header=["P", "ϵ"]) |> DataFrame
+        plot!(df.ϵ, df.P, label=false)
     end
+    gui()
 end
