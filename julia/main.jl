@@ -10,14 +10,23 @@ using DataInterpolations
 import TOV
 
 function main()
-    eos = TOV.EoS("../eos_1.csv")
+    eoss = Vector{TOV.EoS}()
+    neos = 2000
+    for i in 1:neos
+        push!(eoss, TOV.EoS("../eos/out/eos"*string(i)*".csv", ["P", "ϵ"], :linear_interpolation))
+    end
+
     P0i = 5.0
     P0f = 800.0
-    nstars = 200
+    nstars = 100
     u = range(log(P0i), log(P0f), length=nstars)
     P0 = exp.(u).*TOV.MeVfm3
-    @time "Solving MR diagram" mrdiagram = TOV.solvemrdiagram(P0, P->eos(P), 1.0TOV.SI_TO_LENGTH_UNIT)
-    writedat("out/mrdiagram.dat", mrdiagram[:,1], mrdiagram[:,2], mrdiagram[:,3])
+
+    @time Threads.@threads for i in 1:neos
+        eos = eoss[i]
+        mrdiagram = TOV.solvemrdiagram(P0, P->eos(P), 1.0TOV.SI_TO_LENGTH_UNIT)
+        writedat("out/mrdiagram"*string(i)*".dat", mrdiagram[:,1], mrdiagram[:,2], mrdiagram[:,3])
+    end
 end
 
 function formatandjoin(v::AbstractVector)::String

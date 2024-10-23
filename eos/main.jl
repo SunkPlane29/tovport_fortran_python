@@ -68,7 +68,7 @@ function main()
     transform(col, val) = val
     transform(col, val::Float64) = @sprintf("%.16e", val)
 
-    neos = 100
+    neos = 2000
 
     for i in range(1, neos)
         Γvals = 1 .+ 4 .*rand(Float64, length(ρvals))
