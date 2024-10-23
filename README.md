@@ -28,6 +28,12 @@ O código em Python necessita das bibliotecas:
 - Matplotlib
 - Pandas
 
+Elas podem ser instaladas com:
+
+```
+$ pip install numpy matplotlib pandas
+```
+
 ---
 
 Ao rodar o código Júlia pode haver algum problema com a dependência TOV. Basta instalar ela novamente no ambiente:
