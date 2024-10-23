@@ -13,12 +13,13 @@ program main
 
     real(8), dimension(10) :: testv
 
-    p0i = 1.0d0 * MEVFM3_TO_PRESSURE_UNIT
-    p0f = 600.0d0 * MEVFM3_TO_PRESSURE_UNIT
-    delp0 = (p0f - p0i) / n
+    p0i = 5.0d0
+    p0f = 800.0d0
+    delp0 = (log(p0f) - log(p0i)) / n
     do i = 1, n
-        p0(i) = p0i + delp0 * (i - 1)
+        p0(i) = log(p0i) + delp0 * (i - 1)
     end do
+    p0 = exp(p0)*MEVFM3_TO_PRESSURE_UNIT
 
     call read_eos("../eos_1.csv")
 

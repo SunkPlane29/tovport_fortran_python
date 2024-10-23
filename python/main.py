@@ -10,10 +10,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def main():
-    eosfilename = "../eos/out/eos1.csv"
+    eosfilename = "../eos_1.csv"
 
     initialize_eos(eosfilename)
-    p0 = np.linspace(0.5*MEVFM3_TO_PRESSURE_UNIT, 600.0*MEVFM3_TO_PRESSURE_UNIT, 200)
+    p0i = 5.0
+    p0f = 800.0
+    n = 200
+    p0log = np.linspace(np.log(p0i), np.log(p0f), n)
+    p0 = np.exp(p0log)*MEVFM3_TO_PRESSURE_UNIT
     mrdiagram = solve_mrdiagram(p0, 12)
 
     #create dataframe without index and header

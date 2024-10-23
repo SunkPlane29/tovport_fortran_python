@@ -238,3 +238,6 @@ Manifest.toml
 
 temp/
 eos/out/*.csv
+
+*.eps
+*.time
