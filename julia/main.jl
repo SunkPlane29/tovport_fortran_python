@@ -11,7 +11,7 @@ import TOV
 
 function main()
     eoss = Vector{TOV.EoS}()
-    neos = 2000
+    neos = 100
     for i in 1:neos
         push!(eoss, TOV.EoS("../eos/out/eos"*string(i)*".csv", ["P", "ϵ"], :linear_interpolation))
     end

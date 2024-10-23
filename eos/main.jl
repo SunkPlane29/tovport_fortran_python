@@ -52,7 +52,7 @@ function main()
     ρvals = [1.0, 1.4, 2.2, 3.3, 4.9].*ρ0
     maxρ = 7.4*ρ0
    
-    crustdf = CSV.File("crust.csv") |> DataFrame
+    crustdf = CSV.File("crust_sly.csv") |> DataFrame
     crustρ = crustdf[:,1]
     crustP = crustdf[:,2]
     crustϵ = crustdf[:,3]
@@ -68,7 +68,7 @@ function main()
     transform(col, val) = val
     transform(col, val::Float64) = @sprintf("%.16e", val)
 
-    neos = 2000
+    neos = 100
 
     for i in range(1, neos)
         Γvals = 1 .+ 4 .*rand(Float64, length(ρvals))
