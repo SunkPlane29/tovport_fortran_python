@@ -25,10 +25,16 @@ def main():
     fig, ax = plt.subplots()
     # ax.plot(fortran_df["r"], fortran_df["m"], label="Fortran", linestyle="-", color="grey", linewidth=1)
     # ax.plot(python_df["r"], python_df["m"], label="Python", linestyle=(0, (1, 3)), color="blue", linewidth=1)
-    neos = 100
-    for i in range(0, neos):
-        julia_df = pd.read_csv(f"julia/out/mrdiagram{i+1}.dat", sep=" ", header=None, names=["p0", "m", "r"], skipinitialspace=True)
-        ax.plot(julia_df["r"], julia_df["m"], linewidth=1)
+    # neos = 100
+    # for i in range(0, neos):
+    #     julia_df = pd.read_csv(f"julia/out/mrdiagram{i+1}.dat", sep=" ", header=None, names=["p0", "m", "r"], skipinitialspace=True)
+    #     ax.plot(julia_df["r"], julia_df["m"], linewidth=1)
+
+    trsdf = pd.read_csv("julia/out/0mrdiagram.dat", sep=" ", header=None, names=["p0", "m", "r"], skipinitialspace=True)
+    mssdf = pd.read_csv("julia/out/1mrdiagram.dat", sep=" ", header=None, names=["p0", "m", "r"], skipinitialspace=True)
+
+    ax.plot(trsdf["r"], trsdf["m"], label="TRS", linestyle="-", color="blue", linewidth=1)
+    # ax.plot(mssdf["r"], mssdf["m"], label="MSS", linestyle="--", color="red", linewidth=1)
     
     ax.set_xlabel("$R$ [km]")
     ax.set_ylabel("$M$ [M$_\odot$]")
