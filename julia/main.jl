@@ -38,7 +38,7 @@ function main()
     push!(eos1.itp.a, last(eos1.itp.a))
     push!(eos1.itp.b, last(eos1.itp.b))
 
-    mrdiagram = TOV.solvemrdiagram(P0, P->eos1(P), 10.0TOV.SI_TO_LENGTH_UNIT)
+    mrdiagram = TOV.solvemrdiagram(P0, P->eos1(P), 1.0TOV.SI_TO_LENGTH_UNIT, 1e-8)
     writedat("out/0mrdiagram.dat", mrdiagram[:,1], mrdiagram[:,2], mrdiagram[:,3])
     
     eos2 = TOV.EoS("../EOSMSS1.3.csv", ["P", "ϵ"], :linear_interpolation)
@@ -46,9 +46,9 @@ function main()
     mrdiagram = TOV.solvemrdiagram(P0, P->eos2(P), 1.0TOV.SI_TO_LENGTH_UNIT)
     writedat("out/1mrdiagram.dat", mrdiagram[:,1], mrdiagram[:,2], mrdiagram[:,3])
 
-    plot(P0, eos1.(P0), label="EOS TRS1.3", xaxis="Pressure [MeV/fm³]", yaxis="Energy density [MeV/fm³]", title="EOS TRS1.3")
-    plot!(P0, eos2.(P0), label="EOS MSS1.3")
-    gui()
+    # plot(P0, eos1.(P0), label="EOS TRS1.3", xaxis="Pressure [MeV/fm³]", yaxis="Energy density [MeV/fm³]", title="EOS TRS1.3")
+    # plot!(P0, eos2.(P0), label="EOS MSS1.3")
+    # gui()
 end
 
 function formatandjoin(v::AbstractVector)::String
